@@ -1,42 +1,60 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
   ListRenderItemInfo,
-  Text,
   View,
+  ViewToken,
 } from "react-native";
 
+import { useVideoPlayer, VideoView } from "expo-video";
 import { videos, videos2, videos3 } from "../../assets/data";
 
 const { height, width } = Dimensions.get("window");
 
 interface VideoWrapper {
   data: ListRenderItemInfo<string>;
+  currentIndex: number;
 }
-const VideoWrapper = ({ data }: VideoWrapper) => {
+const VideoWrapper = ({ data, currentIndex }: VideoWrapper) => {
   const { index, item } = data;
+
+  const player = useVideoPlayer(item, (player) => {
+    player.loop = true;
+    player.play();
+  });
+
+  useEffect(() => {
+    if (index !== currentIndex) {
+      player.pause();
+    } else {
+      if (!player.playing) player.play();
+    }
+  }, [currentIndex]);
   return (
     <View
       style={{
-        width,
-        height: height,
-        backgroundColor: index % 2 === 0 ? "red" : "blue",
+        flex: 1,
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <Text style={{ color: "white", fontSize: 60, fontWeight: "bold" }}>
-        {index}
-      </Text>
+      <VideoView
+        style={{
+          width,
+          height: height,
+        }}
+        player={player}
+        contentFit="cover"
+        nativeControls={false}
+      />
     </View>
   );
 };
 
 export default function HomeScreen() {
   const [allVideos, setAllVideos] = useState(videos);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const numOfRefreshes = useRef(0);
 
@@ -48,8 +66,23 @@ export default function HomeScreen() {
     }
     numOfRefreshes.current += 1;
   };
+
+  const onViewableItemsChanged = ({
+    viewableItems,
+  }: {
+    viewableItems: ViewToken<string>[];
+    changed: ViewToken<string>[];
+  }) => {
+    const lastItem = viewableItems.at(-1);
+
+    if (!lastItem || !lastItem.key) return;
+    if (Number(lastItem.key) == currentIndex) return;
+    const newIndex = Number(lastItem.key);
+
+    setCurrentIndex(newIndex);
+  };
   return (
-    <View style={{ flex: 1, backgroundColor: "yellow" }}>
+    <View style={{ flex: 1 }}>
       <FlatList
         data={allVideos}
         initialNumToRender={1}
@@ -60,7 +93,10 @@ export default function HomeScreen() {
         onEndReachedThreshold={0.3}
         onEndReached={fetchMoreData}
         showsVerticalScrollIndicator={false}
-        renderItem={(data) => <VideoWrapper data={data} />}
+        onViewableItemsChanged={onViewableItemsChanged}
+        renderItem={(data) => (
+          <VideoWrapper data={data} currentIndex={currentIndex} />
+        )}
       />
     </View>
   );

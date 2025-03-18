@@ -3379,6 +3379,11 @@ expo-system-ui@~4.0.7:
     "@react-native/normalize-colors" "0.76.7"
     debug "^4.3.2"
 
+expo-video@~2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/expo-video/-/expo-video-2.0.6.tgz#4da4e4d427ad42649881a5336697b5a7164aaab3"
+  integrity sha512-oDorKwjreHT596oY6ZfktbDa3VF+Sq7gVsTbnQ4QVqGYL13mIO0s+h4y9xMyG/cDWyFpiRc4UT8KkPdxL0wViQ==
+
 expo-web-browser@~14.0.2:
   version "14.0.2"
   resolved "https://registry.yarnpkg.com/expo-web-browser/-/expo-web-browser-14.0.2.tgz#52d53947c42fdfb225e8c230418ffe508bcf98a7"
@@ -5911,11 +5916,6 @@ react-native-screens@~4.4.0:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
-
-react-native-video@^6.11.0:
-  version "6.11.0"
-  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-6.11.0.tgz#48de610047c3c2e30485ed31ab08dc6fff3b1082"
-  integrity sha512-+lxuyQqUwowWQ5vx82mSnPiAW7ZHvyZrgCRy/6WHREAyCcdveA118SIAjPurRc5bASXPDeit7WkYF4xRlonyYQ==
 
 react-native-web@~0.19.13:
   version "0.19.13"
