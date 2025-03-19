@@ -3,12 +3,15 @@ import {
   Dimensions,
   FlatList,
   ListRenderItemInfo,
+  Pressable,
+  StyleSheet,
   View,
   ViewToken,
 } from "react-native";
 
 import { useVideoPlayer, VideoView } from "expo-video";
 import { videos, videos2, videos3 } from "../../assets/data";
+import { Image } from "expo-image";
 
 const { height, width } = Dimensions.get("window");
 
@@ -17,22 +20,34 @@ interface VideoWrapper {
   currentIndex: number;
 }
 const VideoWrapper = ({ data, currentIndex }: VideoWrapper) => {
-  const shouldPlay = false;
+  const [paused, setPaused] = useState(true);
   const { index, item } = data;
 
   const player = useVideoPlayer(item, (player) => {
     player.loop = true;
-    shouldPlay && player.play();
   });
 
   useEffect(() => {
-    if (!shouldPlay) return;
+    //if video is not in view pause it
     if (index !== currentIndex) {
-      player.pause();
-    } else {
-      if (!player.playing) player.play();
+      if (player.playing) player.pause();
     }
-  }, [currentIndex]);
+    // video is in view
+    else {
+      //player has been paused and should stop playing
+      if (paused) {
+        if (player.playing) player.pause();
+      }
+      //player is playing and should be resumed
+      else {
+        if (!player.playing) player.play();
+      }
+    }
+  }, [currentIndex, paused]);
+
+  const pauseToggle = () => {
+    setPaused(!paused);
+  };
   return (
     <View
       style={{
@@ -50,6 +65,17 @@ const VideoWrapper = ({ data, currentIndex }: VideoWrapper) => {
         contentFit="cover"
         nativeControls={false}
       />
+
+      <Pressable onPress={pauseToggle} style={styles.videoOverlay} />
+      {paused && (
+        <View style={styles.pauseOverlay}>
+          <Image
+            source={require("../../assets/custom-assets/pause.png")}
+            contentFit="contain"
+            style={styles.pause}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -103,3 +129,23 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  videoOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "black",
+    opacity: 0.3,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pause: {
+    height: 50,
+    width: 50,
+  },
+  pauseOverlay: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
+});
