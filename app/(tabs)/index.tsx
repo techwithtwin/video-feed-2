@@ -17,14 +17,16 @@ interface VideoWrapper {
   currentIndex: number;
 }
 const VideoWrapper = ({ data, currentIndex }: VideoWrapper) => {
+  const shouldPlay = false;
   const { index, item } = data;
 
   const player = useVideoPlayer(item, (player) => {
     player.loop = true;
-    player.play();
+    shouldPlay && player.play();
   });
 
   useEffect(() => {
+    if (!shouldPlay) return;
     if (index !== currentIndex) {
       player.pause();
     } else {

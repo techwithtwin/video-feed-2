@@ -45,6 +45,12 @@
           "supportsBackgroundPlayback": false,
           "supportsPictureInPicture": false
         }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/custom-assets/"]
+        }
       ]
     ],
     "experiments": {
